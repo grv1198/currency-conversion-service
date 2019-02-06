@@ -1,7 +1,9 @@
 package com.grv.microservices.currencyconversionservice.controller;
 
 
+import com.grv.microservices.currencyconversionservice.CurrencyExchangeProxy;
 import com.grv.microservices.currencyconversionservice.bean.CurrencyConversionBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +17,17 @@ import java.util.Map;
 @RestController
 public class CurrecyConversionController {
 
+    @Autowired
+    private CurrencyExchangeProxy currencyExchangeProxy;
+
     @GetMapping("/currency-converter/from/{from}/to/{to}/quantity/{quantity}")
-    public ResponseEntity<CurrencyConversionBean> convertCurrency(@PathVariable String from,
+    public CurrencyConversionBean convertCurrency(@PathVariable String from,
                                                   @PathVariable String to,
                                                   @PathVariable BigDecimal quantity) {
 
+        /*
+        *
+        * CODE FOR REST TEMPLATE
         Map<String, String> uriVariables = new HashMap<>();
         uriVariables.put("from", "from");
         uriVariables.put("to", "to");
@@ -27,6 +35,11 @@ public class CurrecyConversionController {
                 CurrencyConversionBean.class,
                 uriVariables);
 
-        return responseEntity;
+        CurrencyConversionBean responseBean = responseEntity.getBody();
+
+*/
+        CurrencyConversionBean response = currencyExchangeProxy.retrieveExchangeValue(from,to);
+        return new CurrencyConversionBean(response.getId(), from, to, response.getConversionMultiple(),
+                quantity, quantity.multiply(response.getConversionMultiple()), response.getPort());
     }
 }
