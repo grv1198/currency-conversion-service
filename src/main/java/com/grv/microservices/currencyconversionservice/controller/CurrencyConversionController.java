@@ -3,6 +3,8 @@ package com.grv.microservices.currencyconversionservice.controller;
 
 import com.grv.microservices.currencyconversionservice.CurrencyExchangeServiceProxy;
 import com.grv.microservices.currencyconversionservice.bean.CurrencyConversionBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,7 @@ import java.util.Map;
 @RestController
 public class CurrencyConversionController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CurrencyConversionController.class);
     @Autowired
     private CurrencyExchangeServiceProxy currencyExchangeServiceProxy;
 
@@ -33,6 +36,7 @@ public class CurrencyConversionController {
                 uriVariables);
 
         CurrencyConversionBean response = responseEntity.getBody();
+        LOG.info("{}", response);
         return new CurrencyConversionBean(response.getId(), from, to, response.getConversionMultiple(),
                 quantity, quantity.multiply(response.getConversionMultiple()), response.getPort());
     }
